@@ -20,8 +20,6 @@ public class Satelite : MonoBehaviour
         deltaTime = gM.GetDeltaTime();
         speed /= (float)distanceOfUnit;
         rb.velocity = direction * speed * deltaTime;
-        //rb.AddForce(direction * 100 * rb.mass);
-        //Debug.Log(GravitaionPhysic.CountGravityAceleration(mass, radius));
     }
     private void FixedUpdate() {
         //rb.AddForce(new Vector3(0, 0, -1) * 1000);
@@ -36,17 +34,8 @@ public class Satelite : MonoBehaviour
     }
     public void SetGravitationInfluence(Vector3 aceleration) {
         rb.velocity += aceleration;
-        newPos = rb.position + rb.velocity/*  + aceleration */;
-        rb.MovePosition(newPos);
-        
-        //rb.velocity += direction * speed;
-
-        /* rb.AddForce(gravityDirection * force * 100);
-        rb.AddForce(new Vector3(1, 0, 1) * force * 65); */
-        //rb.velocity = Vector3.zero;
-        /* rb.AddForce(direction * (force * 0.75f), ForceMode.Force);
-        rb.AddForce(force * gravityDirection);
-        Debug.Log(force); */
+/*         newPos = rb.position + rb.velocity;
+        rb.MovePosition(newPos); */
     }
 
 }

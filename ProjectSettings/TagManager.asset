@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Celestial
   - Satelite
+  - GameManager
   layers:
   - Default
   - TransparentFX
