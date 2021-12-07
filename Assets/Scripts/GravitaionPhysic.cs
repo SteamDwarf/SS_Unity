@@ -17,8 +17,11 @@ static class GravitaionPhysic
         return (GRAVITATION_CONSTANT * (mass / (radius * radius)));
     }
     public static double CountAcelerationOfGravity(double aceleration, double radius, double height) {
-        double acelInMetresPerSecond = (aceleration * Math.Pow((radius / (radius + height)), 2.0));
+        double acelInMetresPerSecond = (aceleration * Math.Pow((radius / (radius + height)), 2));
         double acelInUnitPerFrame = ConvertToUnitPerFrame(acelInMetresPerSecond);
+/*         Debug.Log(acelInMetresPerSecond);
+        Debug.Log(acelInUnitPerFrame); */
+        /* Debug.Log(acelInMetresPerSecond); */
         return acelInUnitPerFrame;
     }
     public static double CountRequiredSpeed(double mainObjMass, double distance) {
@@ -28,6 +31,6 @@ static class GravitaionPhysic
         return (GRAVITATION_CONSTANT * mainObjMass) / Math.Pow(distance, 2);
     }
     public static double ConvertToUnitPerFrame(double metresPerSecond) {
-        return metresPerSecond / Constants.distanceOfUnit * (Time.fixedDeltaTime * 10000000)/* 50 * 60 * 60 * 24 * 7*/;
+        return metresPerSecond /* / Constants.distanceOfUnit */ / Math.Pow(1 / Time.deltaTime, 2)/* 50 * 60 * 60 * 24 * 7*/;
     }
 }

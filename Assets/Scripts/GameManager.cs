@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,6 +8,7 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField] private float timeScale;
     private List<GameObject> celestialObjects = new List<GameObject>();
+    [SerializeField] private int timeFactor;
     private float deltaTime;
 
     
@@ -18,28 +20,21 @@ public class GameManager : MonoBehaviour
            celestialObjects.Add(celestial);
        }
 
-       deltaTime = Time.fixedDeltaTime * (float)Constants.distanceOfUnit * 500;
+       //deltaTime = Time.fixedDeltaTime * (float)Constants.distanceOfUnit * 500;
        Time.timeScale = timeScale;
        
-       //Debug.Log(Constants.distanceOfUnit);
-       double requiredSpeedInKilometres = GravitaionPhysic.CountRequiredSpeed(5.976e+24, 384467000) / 1000;
-       double requiredSpeedInUnits = GravitaionPhysic.ConvertToUnitPerFrame(requiredSpeedInKilometres) * 10;
-       Debug.Log(requiredSpeedInUnits);
-       //Debug.Log(GravitaionPhysic.CountRequiredSpeed(5.976e+24, 384467000) / 1000);
-       //Debug.Log(GravitaionPhysic.CountReauiredAceleration(5.976e+24, 384467000) / Constants.distanceOfUnit);
-       
+/*        double earthGravityAcel = GravitaionPhysic.CountGravityAceleration(5.9726e24, 6371000);
+       double moonAcel = GravitaionPhysic.CountAcelerationOfGravity(earthGravityAcel, 6371000, 384467000 - 6371000);
+       Debug.Log($"Ускорение свободного падения на Земле{earthGravityAcel}");
+       Debug.Log($"Ускорение свободного падения для луны к Земле{moonAcel}"); */
     }
 
     void FixedUpdate() {
         SimulateGravitation();
     }
 
-    public float GetDeltaTime() {
-        if(deltaTime == 0) {
-            //return deltaTimeFactor * Time.deltaTime;
-            return Time.fixedDeltaTime * (float)Constants.distanceOfUnit * 500;
-        }
-        return deltaTime;
+    public int GetTimeFactor() {
+        return timeFactor;
     }
 //TODO Перенести логику подсчета расстояни и получения массы, позиции объектов в GravitationPhysics (Но это не точно)
     private void SimulateGravitation() {
@@ -59,24 +54,15 @@ public class GameManager : MonoBehaviour
                 double secondObjRadius = secondObj.GetRadius();
 
                 double distance = Vector3.Distance(firstObjPos, secondObjPos) * Constants.distanceOfUnit;
+                //Debug.Log(distance);
                 Vector3 firstObjDirection = (secondObjPos - firstObjPos).normalized;
                 Vector3 secondObjDirection = (firstObjPos - secondObjPos).normalized;
 
-                /* double gravity = GravitaionPhysic.CountGravity(firstObjMass, secondObjMass, distance);
-                double firstObjAcel = gravity / firstObjMass / Constants.distanceOfUnit;
-                double secondObjAcel = gravity / secondObjMass / Constants.distanceOfUnit;
-                Debug.Log(gravity);
-                Debug.Log(gravity / firstObjMass);
-                Debug.Log(gravity / secondObjMass); */
-                double firstG = GravitaionPhysic.CountAcelerationOfGravity(firstObjGravityAcel, firstObjRadius, distance - firstObjRadius) /* / Constants.distanceOfUnit */;
-                double secondG = GravitaionPhysic.CountAcelerationOfGravity(secondObjGravityAcel, secondObjRadius, distance - secondObjRadius) /* / Constants.distanceOfUnit */;
-/*                 Debug.Log(firstG * Constants.distanceOfUnit);
-                Debug.Log(secondG * Constants.distanceOfUnit); */
+                double firstG = GravitaionPhysic.CountAcelerationOfGravity(firstObjGravityAcel, firstObjRadius, distance - firstObjRadius);
+                double secondG = GravitaionPhysic.CountAcelerationOfGravity(secondObjGravityAcel, secondObjRadius, distance - secondObjRadius);
 
-                /* Vector3 firstObjAcelerationVector = firstObjDirection * (float)firstObjAcel * deltaTime;
-                Vector3 secondObjAcelerationVector = secondObjDirection * (float)secondObjAcel * deltaTime; */
-                Vector3 firstObjAcelerationVector = firstObjDirection * (float)secondG /* * deltaTime */;
-                Vector3 secondObjAcelerationVector = secondObjDirection * (float)firstG /* * deltaTime */;
+                Vector3 firstObjAcelerationVector = firstObjDirection * (float)secondG * Mathf.Pow(10, timeFactor * 2);
+                Vector3 secondObjAcelerationVector = secondObjDirection * (float)firstG * Mathf.Pow(10, timeFactor * 2);
 
                 firstObj.SetGravitationInfluence(firstObjAcelerationVector);
                 secondObj.SetGravitationInfluence(secondObjAcelerationVector);

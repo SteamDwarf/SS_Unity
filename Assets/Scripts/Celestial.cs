@@ -14,44 +14,23 @@ public class Celestial : MonoBehaviour
     private GameManager gM;
     private double g;
     float deltaTime;
+    int timeFactor;
     float distanceOfUnit;
+    Vector3 velocity;
     public Vector3 curAcel;
     
     void Start() {
         rb = GetComponent<Rigidbody>();
         gM = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+        timeFactor = gM.GetTimeFactor();
         g = GravitaionPhysic.CountGravityAceleration(mass, radius);
-        deltaTime = gM.GetDeltaTime();
+        //deltaTime = gM.GetDeltaTime();
         distanceOfUnit = (float)Constants.distanceOfUnit;
-        speed = (float)GravitaionPhysic.ConvertToUnitPerFrame(speed);
-        rb.velocity = direction * speed /* * deltaTime */;
+        speed = (float)GravitaionPhysic.ConvertToUnitPerFrame(speed) * Mathf.Pow(10, timeFactor);
+        //velocity = direction * speed;
+        rb.velocity = direction * speed;
     }
 
-    /* private void FixedUpdate() {
-        Attraction();
-    }
-    private void Attraction() {
-        double sateliteMass = satelite.GetMass();
-        Vector3 satelitePosition = satelite.GetPosition();
-        double distance = Vector3.Distance(satelitePosition, rb.position);
-        double distance = Vector3.Distance(satelitePosition, rb.position) * distanceOfUnit;
-        Vector3 direction = (rb.position - satelitePosition).normalized;
-        double acelerationOfGravity = GravitaionPhysic.CountAcelerationOfGravity(g, radius, distance - radius) / distanceOfUnit;
-        Debug.Log(acelerationOfGravity);
-        Vector3 aceleration = direction * (float)acelerationOfGravity * deltaTime;
-        satelite.SetGravitationInfluence(aceleration);
-
-        double gravity = GravitaionPhysic.CountGravity(sateliteMass, mass, distance); 
-        double aceleration = GravitaionPhysic.CountAceleration(gravity, sateliteMass);
-        Debug.Log(Vector3.Distance(satelitePosition, rb.position));
-        Debug.Log(distance);
-        Debug.Log(gravity);
-        Debug.Log(aceleration);
-        satelite.SetGravitationInfluence(direction, (float)aceleration);
-        Debug.Log(distance);
-        
-        Debug.Log(GravitaionPhysic.CountGravityByAceleration(g, radius, distance - radius) * sateliteMass);
-    } */
     public double GetMass() {
         return mass;
     }
@@ -65,10 +44,12 @@ public class Celestial : MonoBehaviour
         return radius;
     }
     public void SetGravitationInfluence(Vector3 aceleration) {
+        /* if(rb.velocity == Vector3.zero) {
+            Debug.Log("zero");
+            rb.velocity = velocity;
+        } */
+
         curAcel = aceleration;
         rb.velocity += aceleration;
-        //Debug.Log(rb.velocity);
-/*         newPos = rb.position + rb.velocity;
-        rb.MovePosition(newPos); */
     }
 }

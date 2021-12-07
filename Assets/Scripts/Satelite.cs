@@ -17,7 +17,7 @@ public class Satelite : MonoBehaviour
     void Start() {
         rb = GetComponent<Rigidbody>();
         gM = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
-        deltaTime = gM.GetDeltaTime();
+        //deltaTime = gM.GetDeltaTime();
         speed /= (float)distanceOfUnit;
         rb.velocity = direction * speed * deltaTime;
     }
