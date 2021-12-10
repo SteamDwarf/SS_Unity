@@ -54,7 +54,7 @@ public class GameManager : MonoBehaviour
                 double secondObjRadius = secondObj.GetRadius();
 
                 double distance = Vector3.Distance(firstObjPos, secondObjPos) * Constants.distanceOfUnit;
-                //Debug.Log(distance);
+                Debug.Log(distance);
                 Vector3 firstObjDirection = (secondObjPos - firstObjPos).normalized;
                 Vector3 secondObjDirection = (firstObjPos - secondObjPos).normalized;
 
