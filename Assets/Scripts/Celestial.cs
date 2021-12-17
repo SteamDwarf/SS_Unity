@@ -1,55 +1,59 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class Celestial : MonoBehaviour
 {
-    [SerializeField] private double mass;
-    [SerializeField] private double radius;
-    [SerializeField] private Vector3 direction;
-    [SerializeField] private float speed;
+    [SerializeField] protected Vector3 direction;
+    [SerializeField] protected float speed;
+    [SerializeField] private CelestialName celestialName;
+    [SerializeField] private CelestialType celestialType;
     
-    private Satelite satelite;
-    private Rigidbody rb;
+    protected Rigidbody rb;
     private GameManager gM;
-    private double g;
-    float deltaTime;
-    int timeFactor;
-    float distanceOfUnit;
-    Vector3 velocity;
-    public Vector3 curAcel;
+    private UIManager uIManager;
+    protected Vector3 curAcel;
+
+    protected int timeFactor;
+
     
-    void Start() {
+    protected virtual void Start() {
         rb = GetComponent<Rigidbody>();
         gM = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+        uIManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<UIManager>();
+
         timeFactor = gM.GetTimeFactor();
-        g = GravitaionPhysic.CountGravityAceleration(mass, radius);
-        //deltaTime = gM.GetDeltaTime();
-        distanceOfUnit = (float)Constants.distanceOfUnit;
         speed = (float)GravitaionPhysic.ConvertToUnitPerFrame(speed) * Mathf.Pow(10, timeFactor);
-        //velocity = direction * speed;
+
         rb.velocity = direction * speed;
     }
 
-    public double GetMass() {
-        return mass;
+    public CelestialName GetName() {
+        return celestialName;
     }
-    public Vector3 GetPosition() {
-        return rb.position;
+    public CelestialType GetCelestialType() {
+        return celestialType;
     }
-    public double GetG() {
-        return g;
+    public void SetInitialSpeed(float speed) {
+        rb.velocity = direction * speed;
     }
-    public double GetRadius() {
-        return radius;
+    public Vector3 GetDirection() {
+        return direction;
     }
     public void SetGravitationInfluence(Vector3 aceleration) {
-        /* if(rb.velocity == Vector3.zero) {
-            Debug.Log("zero");
-            rb.velocity = velocity;
-        } */
+        int speedInMetres;
 
         curAcel = aceleration;
         rb.velocity += aceleration;
+        speedInMetres = Convert.ToInt32(GravitaionPhysic.ConvertToMetresPerSec(rb.velocity.magnitude) / Mathf.Pow(10, timeFactor));
+
+        uIManager.UpdateSpeed(this.gameObject.name, speedInMetres);
     }
+/*     public void TimeAccelerate(int newTimeFactor) {
+        Vector3 planetInfluence = rb.velocity - (direction * speed);
+
+        speed = (float)GravitaionPhysic.ConvertToUnitPerFrame(speed) * Mathf.Pow(10, newTimeFactor);
+        rb.velocity = (planetInfluence * Mathf.Pow(10, (timeFactor - 1) * 2)) + (direction * speed);
+    } */
 }

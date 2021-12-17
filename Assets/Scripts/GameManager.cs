@@ -2,72 +2,131 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private float timeScale;
-    private List<GameObject> celestialObjects = new List<GameObject>();
     [SerializeField] private int timeFactor;
-    private float deltaTime;
+    [SerializeField] Sprite resumeSprite;
+    [SerializeField] Sprite pauseSprite;
 
-    
+    private Image pauseResumeBtn;
 
-    // Start is called before the first frame update
+    private List<CelestialStruct> celestials = new List<CelestialStruct>();
+    private List<CelestialStruct> satelites = new List<CelestialStruct>();
+    //TODO Добавить тег satelite. Получать отдельно satelites, перебрать их добавив в отдельный список
+    //TODO Также можно оставить тольео CelestialStruct, а там где надо передать g, для спутник передавать 0
+    //TODO И при каждом переборе celestials, в конце будем перебирать satelites и передавать им ускорение.
     void Start() {
        GameObject[] celestialsArray = GameObject.FindGameObjectsWithTag("Celestial");
+       GameObject[] satelitesArray = GameObject.FindGameObjectsWithTag("Satelite");
+       pauseResumeBtn = GameObject.FindGameObjectWithTag("PauseResumeBtn").GetComponent<Image>();
+
        foreach (var celestial in celestialsArray) {
-           celestialObjects.Add(celestial);
+           Celestial celestialScript = celestial.GetComponent<Celestial>();
+           CelestialName name = celestialScript.GetName();
+           Dictionary<string, double> physData = CelestialsDB.GetCelestialInformation(name);
+           Rigidbody rb = celestial.GetComponent<Rigidbody>();
+           float speed = (float)GravitaionPhysic.ConvertToUnitPerFrame(physData["speed"]) * Mathf.Pow(10, timeFactor);
+           double g = GravitaionPhysic.CountGravityAceleration(physData["mass"], physData["radius"]);
+           CelestialStruct celestialStruct = new CelestialStruct(physData, rb, celestialScript, g);;
+
+           celestials.Add(celestialStruct);
+       }
+       foreach (var satelite in satelitesArray) {
+           Celestial celestialScript = satelite.GetComponent<Celestial>();
+           CelestialName name = celestialScript.GetName();
+           Dictionary<string, double> physData = CelestialsDB.GetCelestialInformation(name);
+           Rigidbody rb = satelite.GetComponent<Rigidbody>();
+           float speed = (float)GravitaionPhysic.ConvertToUnitPerFrame(physData["speed"]) * Mathf.Pow(10, timeFactor);
+           CelestialStruct celestialStruct = new CelestialStruct(physData, rb, celestialScript, 0);
+           
+           satelites.Add(celestialStruct);
        }
 
-       //deltaTime = Time.fixedDeltaTime * (float)Constants.distanceOfUnit * 500;
-       Time.timeScale = timeScale;
-       
-/*        double earthGravityAcel = GravitaionPhysic.CountGravityAceleration(5.9726e24, 6371000);
-       double moonAcel = GravitaionPhysic.CountAcelerationOfGravity(earthGravityAcel, 6371000, 384467000 - 6371000);
-       Debug.Log($"Ускорение свободного падения на Земле{earthGravityAcel}");
-       Debug.Log($"Ускорение свободного падения для луны к Земле{moonAcel}"); */
+
+
+       //Time.timeScale = timeScale;
+       PauseSimulation();
     }
 
     void FixedUpdate() {
         SimulateGravitation();
     }
+    private void ResumeSimulation() {
+        Time.timeScale = timeScale;
+        pauseResumeBtn.sprite = resumeSprite;
+    }
+    private void PauseSimulation() {
+        Time.timeScale = 0;
+        pauseResumeBtn.sprite = pauseSprite;
+    }
+    
+    public void ResumePauseSimulation() {
+        if(Time.timeScale > 0){
+            PauseSimulation();
+            return;
+        }
+        
+        ResumeSimulation();
+    }
+    
+    public void TimeAccelerate() {
+        Time.timeScale += 10;
+        /* PauseSimulation();
+
+        timeFactor += 1;
+        foreach (var satelite in satelites) {
+            satelite.script.TimeAccelerate(timeFactor);
+        }
+
+        ResumeSimulation(); */
+    }
+    public void SateliteAcelerate() {
+        /* foreach (var satelite in satelites) {
+            Vector3 direction = satelite.script.GetDirection();
+            satelite.script.SetGravitationInfluence(direction * 100);
+            Debug.Log("Accelerating");
+        }  */
+        Vector3 direction = satelites[0].script.GetDirection();
+        satelites[0].script.SetGravitationInfluence(direction * (float)GravitaionPhysic.ConvertToUnitPerFrame(1));
+        Debug.Log("Accelerating");
+    }
 
     public int GetTimeFactor() {
         return timeFactor;
     }
-//TODO Перенести логику подсчета расстояни и получения массы, позиции объектов в GravitationPhysics (Но это не точно)
+
     private void SimulateGravitation() {
-        
-        for (var i = 0; i < celestialObjects.Count; i++) {
-            Celestial firstObj = celestialObjects[i].GetComponent<Celestial>();
-            double firstObjMass = firstObj.GetMass();
-            Vector3 firstObjPos = firstObj.GetPosition();
-            double firstObjGravityAcel = firstObj.GetG();
-            double firstObjRadius = firstObj.GetRadius();
+        for (int i = 0; i < celestials.Count; i++) {
+            CelestialStruct firstObj = celestials[i];
 
-            for (var j = i + 1; j < celestialObjects.Count; j++) {
-                Celestial secondObj = celestialObjects[j].GetComponent<Celestial>();
-                double secondObjMass = secondObj.GetMass();
-                Vector3 secondObjPos = secondObj.GetPosition();
-                double secondObjGravityAcel = secondObj.GetG();
-                double secondObjRadius = secondObj.GetRadius();
+            for (int j = i + 1; j < celestials.Count; j++) {
+                CelestialStruct secondObj = celestials[j];
 
-                double distance = Vector3.Distance(firstObjPos, secondObjPos) * Constants.distanceOfUnit;
-                Debug.Log(distance);
-                Vector3 firstObjDirection = (secondObjPos - firstObjPos).normalized;
-                Vector3 secondObjDirection = (firstObjPos - secondObjPos).normalized;
-
-                double firstG = GravitaionPhysic.CountAcelerationOfGravity(firstObjGravityAcel, firstObjRadius, distance - firstObjRadius);
-                double secondG = GravitaionPhysic.CountAcelerationOfGravity(secondObjGravityAcel, secondObjRadius, distance - secondObjRadius);
+                double distance = Vector3.Distance(firstObj.rb.position, secondObj.rb.position) * Constants.distanceOfUnit;
+                Vector3 firstObjDirection = (secondObj.rb.position - firstObj.rb.position).normalized;
+                Vector3 secondObjDirection = (firstObj.rb.position - secondObj.rb.position).normalized;
+                
+                double firstG = GravitaionPhysic.CountGravityAcelerationByDistance(firstObj.g, firstObj.radius, distance - firstObj.radius);
+                double secondG = GravitaionPhysic.CountGravityAcelerationByDistance(secondObj.g, secondObj.radius, distance - secondObj.radius);
 
                 Vector3 firstObjAcelerationVector = firstObjDirection * (float)secondG * Mathf.Pow(10, timeFactor * 2);
                 Vector3 secondObjAcelerationVector = secondObjDirection * (float)firstG * Mathf.Pow(10, timeFactor * 2);
 
-                firstObj.SetGravitationInfluence(firstObjAcelerationVector);
-                secondObj.SetGravitationInfluence(secondObjAcelerationVector);
-            }    
-        }
+                firstObj.script.SetGravitationInfluence(firstObjAcelerationVector);
+                secondObj.script.SetGravitationInfluence(secondObjAcelerationVector);
+            }
 
+            foreach (var satelite in satelites) {
+                double distance = Vector3.Distance(firstObj.rb.position, satelite.rb.position) * Constants.distanceOfUnit;
+                Vector3 sateliteDirection = (firstObj.rb.position - satelite.rb.position).normalized;
+                double celestialG = GravitaionPhysic.CountGravityAcelerationByDistance(firstObj.g, firstObj.radius, distance - firstObj.radius);
+                Vector3 sateliteAcelerationVector = sateliteDirection * (float)celestialG * Mathf.Pow(10, timeFactor * 2);
+
+                satelite.script.SetGravitationInfluence(sateliteAcelerationVector);
+            }
+        }
     }
 }

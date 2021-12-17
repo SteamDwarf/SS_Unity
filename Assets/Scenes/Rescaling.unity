@@ -265,10 +265,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a248c8217cd0c44ea1d20b1e185756e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mass: 1.9885e+30
-  radius: 695510000
   direction: {x: 0, y: 0, z: 0}
   speed: 0
+  celestialName: 3
   curAcel: {x: 0, y: 0, z: 0}
 --- !u!135 &238435817
 SphereCollider:
@@ -497,10 +496,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a248c8217cd0c44ea1d20b1e185756e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mass: 3.33022e+23
-  radius: 2439700
   direction: {x: 0, y: 0, z: -1}
   speed: 4736
+  celestialName: 2
   curAcel: {x: 0, y: 0, z: 0}
 --- !u!135 &418925652
 SphereCollider:
@@ -629,10 +627,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a248c8217cd0c44ea1d20b1e185756e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mass: 5.9726e+24
-  radius: 6371000
   direction: {x: 0, y: 0, z: -1}
   speed: 2978.3
+  celestialName: 0
   curAcel: {x: 0, y: 0, z: 0}
 --- !u!135 &1312637972
 SphereCollider:
@@ -1042,10 +1039,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a248c8217cd0c44ea1d20b1e185756e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mass: 7.3477e+22
-  radius: 1737100
   direction: {x: 0, y: 0, z: -1}
   speed: 3080.6
+  celestialName: 0
   curAcel: {x: 0, y: 0, z: 0}
 --- !u!135 &1369615009
 SphereCollider:
@@ -1318,10 +1314,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a248c8217cd0c44ea1d20b1e185756e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mass: 4.8675e+24
-  radius: 6051800
   direction: {x: 0, y: 0, z: -1}
   speed: 3502
+  celestialName: 1
   curAcel: {x: 0, y: 0, z: 0}
 --- !u!135 &1821141597
 SphereCollider:

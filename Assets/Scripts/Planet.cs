@@ -1,41 +1,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Planet : MonoBehaviour
+public class Planet : Celestial
 {
-    private HashSet<Rigidbody> affectedBodies = new HashSet<Rigidbody>();
-    private Rigidbody componentRigidbody;
+    /* [SerializeField] private double radius;
 
-    private void Start()
-    {
-        componentRigidbody = GetComponent<Rigidbody>();
+    private double g;
+
+    protected override void Start() {
+        base.Start();
+        g = GravitaionPhysic.CountGravityAceleration(mass, radius);
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.attachedRigidbody != null)
-        {
-            affectedBodies.Add(other.attachedRigidbody);
-        }
+    public double GetRadius() {
+        return radius;
     }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.attachedRigidbody != null)
-        {
-            affectedBodies.Remove(other.attachedRigidbody);
-        }
-    }
-
-    private void FixedUpdate()
-    {
-        foreach (Rigidbody body in affectedBodies)
-        {
-            Vector3 forceDirection = (transform.position - body.position).normalized;
-            float distanceSqr = (transform.position - body.position).sqrMagnitude;
-            float strength = 0.001f * componentRigidbody.mass * body.mass / distanceSqr;
-
-            body.AddForce(forceDirection * strength);
-        }
-    }
+    public double GetG() {
+        return g;
+    } */
 }
