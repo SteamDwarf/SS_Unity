@@ -8,6 +8,9 @@ TagManager:
   - Satelite
   - GameManager
   - PauseResumeBtn
+  - CelestialImage
+  - InputHeight
+  - LaunchBtn
   layers:
   - Default
   - TransparentFX

@@ -15,40 +15,41 @@ public class GameManager : MonoBehaviour
 
     private List<CelestialStruct> celestials = new List<CelestialStruct>();
     private List<CelestialStruct> satelites = new List<CelestialStruct>();
-    //TODO Добавить тег satelite. Получать отдельно satelites, перебрать их добавив в отдельный список
-    //TODO Также можно оставить тольео CelestialStruct, а там где надо передать g, для спутник передавать 0
-    //TODO И при каждом переборе celestials, в конце будем перебирать satelites и передавать им ускорение.
+    private UIManager uIManager;
+
     void Start() {
-       GameObject[] celestialsArray = GameObject.FindGameObjectsWithTag("Celestial");
-       GameObject[] satelitesArray = GameObject.FindGameObjectsWithTag("Satelite");
-       pauseResumeBtn = GameObject.FindGameObjectWithTag("PauseResumeBtn").GetComponent<Image>();
+        GameObject[] celestialsArray = GameObject.FindGameObjectsWithTag("Celestial");
+        GameObject[] satelitesArray = GameObject.FindGameObjectsWithTag("Satelite");
+        pauseResumeBtn = GameObject.FindGameObjectWithTag("PauseResumeBtn").GetComponent<Image>();
+        uIManager = this.gameObject.GetComponent<UIManager>();
 
-       foreach (var celestial in celestialsArray) {
-           Celestial celestialScript = celestial.GetComponent<Celestial>();
-           CelestialName name = celestialScript.GetName();
-           Dictionary<string, double> physData = CelestialsDB.GetCelestialInformation(name);
-           Rigidbody rb = celestial.GetComponent<Rigidbody>();
-           float speed = (float)GravitaionPhysic.ConvertToUnitPerFrame(physData["speed"]) * Mathf.Pow(10, timeFactor);
-           double g = GravitaionPhysic.CountGravityAceleration(physData["mass"], physData["radius"]);
-           CelestialStruct celestialStruct = new CelestialStruct(physData, rb, celestialScript, g);;
+        foreach (var celestial in celestialsArray) {
+            Celestial celestialScript = celestial.GetComponent<Celestial>();
+            Debug.Log(celestial.name);
+            CelestialName name = celestialScript.GetName();
+            Dictionary<string, double> physData = CelestialsDB.GetCelestialInformation(name);
+            Rigidbody rb = celestial.GetComponent<Rigidbody>();
+            float speed = (float)GravitaionPhysic.ConvertToUnitPerFrame(physData["speed"]) * Mathf.Pow(10, timeFactor);
+            double g = GravitaionPhysic.CountGravityAceleration(physData["mass"], physData["radius"]);
+            CelestialStruct celestialStruct = new CelestialStruct(physData, rb, celestialScript, g);;
 
-           celestials.Add(celestialStruct);
-       }
-       foreach (var satelite in satelitesArray) {
-           Celestial celestialScript = satelite.GetComponent<Celestial>();
-           CelestialName name = celestialScript.GetName();
-           Dictionary<string, double> physData = CelestialsDB.GetCelestialInformation(name);
-           Rigidbody rb = satelite.GetComponent<Rigidbody>();
-           float speed = (float)GravitaionPhysic.ConvertToUnitPerFrame(physData["speed"]) * Mathf.Pow(10, timeFactor);
-           CelestialStruct celestialStruct = new CelestialStruct(physData, rb, celestialScript, 0);
-           
-           satelites.Add(celestialStruct);
-       }
+            celestials.Add(celestialStruct);
+        }
+        foreach (var satelite in satelitesArray) {
+            Celestial celestialScript = satelite.GetComponent<Celestial>();
+            CelestialName name = celestialScript.GetName();
+            Dictionary<string, double> physData = CelestialsDB.GetCelestialInformation(name);
+            Rigidbody rb = satelite.GetComponent<Rigidbody>();
+            float speed = (float)GravitaionPhysic.ConvertToUnitPerFrame(physData["speed"]) * Mathf.Pow(10, timeFactor);
+            CelestialStruct celestialStruct = new CelestialStruct(physData, rb, celestialScript, 0);
+            
+            satelites.Add(celestialStruct);
+        }
 
 
 
        //Time.timeScale = timeScale;
-       PauseSimulation();
+        PauseSimulation();
     }
 
     void FixedUpdate() {
@@ -126,6 +127,7 @@ public class GameManager : MonoBehaviour
                 Vector3 sateliteAcelerationVector = sateliteDirection * (float)celestialG * Mathf.Pow(10, timeFactor * 2);
 
                 satelite.script.SetGravitationInfluence(sateliteAcelerationVector);
+                uIManager.UpdateDistance(satelite.script.gameObject.name, distance);
             }
         }
     }

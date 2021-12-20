@@ -15,8 +15,16 @@ static class GravitaionPhysic
         double acelInUnitPerFrame = ConvertToUnitPerFrame(acelInMetresPerSecond);
         return acelInUnitPerFrame;
     }
+    public static double CountGravityAcelerationByDistance(double aceleration, double radius, double height, float deltaTime) {
+        double acelInMetresPerSecond = (aceleration * Math.Pow((radius / (radius + height)), 2));
+        double acelInUnitPerFrame = ConvertToUnitPerFrame(acelInMetresPerSecond, deltaTime);
+        return acelInUnitPerFrame;
+    }
     public static double ConvertToUnitPerFrame(double metresPerSecond) {
         return metresPerSecond / Math.Pow(1 / Time.deltaTime, 2);
+    }
+    public static double ConvertToUnitPerFrame(double metresPerSecond, float deltaTime) {
+        return metresPerSecond / Math.Pow(1 / deltaTime, 2);
     }
     public static double ConvertToMetresPerSec(double unitsPerFrame) {
         return unitsPerFrame * Math.Pow(1 / Time.deltaTime, 2);

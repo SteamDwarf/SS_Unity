@@ -66,7 +66,6 @@ MonoBehaviour:
   speed: 350
   celestialName: 4
   celestialType: 1
-  curAcel: {x: 0, y: 0, z: 0}
 --- !u!96 &6829494955519342164
 TrailRenderer:
   serializedVersion: 2

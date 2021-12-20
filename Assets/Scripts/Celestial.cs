@@ -9,11 +9,13 @@ public class Celestial : MonoBehaviour
     [SerializeField] protected float speed;
     [SerializeField] private CelestialName celestialName;
     [SerializeField] private CelestialType celestialType;
+    [SerializeField] private Sprite celestialSprite;
+    [SerializeField] protected GameObject bindedCelestial;
     
     protected Rigidbody rb;
     private GameManager gM;
-    private UIManager uIManager;
-    protected Vector3 curAcel;
+    protected UIManager uIManager;
+    public Vector3 curAcel;
 
     protected int timeFactor;
 
@@ -41,7 +43,10 @@ public class Celestial : MonoBehaviour
     public Vector3 GetDirection() {
         return direction;
     }
-    public void SetGravitationInfluence(Vector3 aceleration) {
+    public Sprite GetCelestialSprite() {
+        return celestialSprite;
+    }
+    public virtual void SetGravitationInfluence(Vector3 aceleration) {
         int speedInMetres;
 
         curAcel = aceleration;
