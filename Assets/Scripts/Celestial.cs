@@ -17,6 +17,8 @@ public class Celestial : MonoBehaviour
     protected UIManager uIManager;
     protected Vector3 curAcel;
 
+    private Vector3 velocity;
+
     protected int timeFactor;
 
     
@@ -26,9 +28,9 @@ public class Celestial : MonoBehaviour
         uIManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<UIManager>();
 
         timeFactor = gM.GetTimeFactor();
-        speed = (float)GravitaionPhysic.ConvertToUnitPerFrame(speed) * Mathf.Pow(10, timeFactor);
+        speed = (float)GravitaionPhysic.ConvertToUnitPerFrame(speed);
 
-        rb.velocity = direction * speed;
+        //rb.velocity = direction * speed;
     }
 
     public CelestialName GetName() {
@@ -46,13 +48,21 @@ public class Celestial : MonoBehaviour
     public Sprite GetCelestialSprite() {
         return celestialSprite;
     }
-    public virtual void SetGravitationInfluence(Vector3 aceleration) {
+    public virtual void SetGravitationInfluence(Vector3 aceleration, float timeFactor) {
         int speedInMetres;
 
         curAcel = aceleration;
-        rb.velocity += aceleration;
+        velocity += aceleration;
+        //rb.velocity += aceleration;
+        Move(velocity, timeFactor);
         speedInMetres = Convert.ToInt32(GravitaionPhysic.ConvertToMetresPerSec(rb.velocity.magnitude));
 
         uIManager.UpdateSpeed(this.gameObject.name, speedInMetres);
+    }
+
+    private void Move(Vector3 aceleration, float timeFactor) {
+        Vector3 newAceleration = (direction * speed * timeFactor + aceleration * Mathf.Pow(timeFactor, 2)) * Time.fixedDeltaTime;
+        Vector3 newPos = rb.position + newAceleration;
+        rb.MovePosition(newPos);
     }
 }

@@ -50,7 +50,6 @@ public class GameManager : MonoBehaviour
             CelestialName name = celestialScript.GetName();
             Dictionary<string, double> physData = CelestialsDB.GetCelestialInformation(name);
             Rigidbody rb = celestial.GetComponent<Rigidbody>();
-            float speed = (float)GravitaionPhysic.ConvertToUnitPerFrame(physData["speed"]) * Mathf.Pow(10, timeFactor);
             double g;
 
             if(isMassive) {
@@ -96,15 +95,15 @@ public class GameManager : MonoBehaviour
                 Vector3 firstObjAcelerationVector = FindObjectAcelerationVector(distance, firstObj, secondObj);
                 Vector3 secondObjAcelerationVector = FindObjectAcelerationVector(distance, secondObj, firstObj);
 
-                firstObj.script.SetGravitationInfluence(firstObjAcelerationVector);
-                secondObj.script.SetGravitationInfluence(secondObjAcelerationVector);
+                firstObj.script.SetGravitationInfluence(firstObjAcelerationVector, timeFactor);
+                secondObj.script.SetGravitationInfluence(secondObjAcelerationVector, timeFactor);
             }
 
             foreach (var satelite in satelites) {
                 double distance = Vector3.Distance(firstObj.rb.position, satelite.rb.position) * Constants.DISTANCE_OF_UNIT;
                 Vector3 sateliteAcelerationVector = FindObjectAcelerationVector(distance, satelite, firstObj);
 
-                satelite.script.SetGravitationInfluence(sateliteAcelerationVector);
+                satelite.script.SetGravitationInfluence(sateliteAcelerationVector, timeFactor);
                 uIManager.UpdateDistance(satelite.script.gameObject.name, distance);
             }
         }

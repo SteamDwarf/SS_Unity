@@ -82,14 +82,12 @@ public class SmartSatelite : Celestial
 
         return direction;
     }
-    public override void SetGravitationInfluence(Vector3 aceleration) {
-/*         if(!isLaunched) {
-            return;
-        } */
+   /*  public override void SetGravitationInfluence(Vector3 aceleration) {
+
 
         base.SetGravitationInfluence(aceleration);
 
-    }
+    } */
     public void Launch() {
         //String inputHeight = inputHeightUI.text.Split(' ')[0];
         
