@@ -21,8 +21,11 @@ public class SmartSatelite : Celestial
     protected override void Start() {
         base.Start();
 
-        inputHeightUI = GameObject.FindGameObjectWithTag("InputHeight").GetComponent<TMP_InputField>();
-        currentDirection = new Vector3(0, 0, -1f);
+        //inputHeightUI = GameObject.FindGameObjectWithTag("InputHeight").GetComponent<TMP_InputField>();
+        //currentDirection = new Vector3(0, 0, -1f);
+        
+        
+        Launch();
 
 /*         curG = CountBindedPlanetG();
         direction = FindDirection();
@@ -32,7 +35,8 @@ public class SmartSatelite : Celestial
     }
 
     void FixedUpdate() {
-        if(!isLaunched) {
+        Debug.Log(distance);
+        /* if(!isLaunched) {
             return;
         }
 
@@ -42,11 +46,7 @@ public class SmartSatelite : Celestial
             double bindedPlanetMass = CelestialsDB.GetCelestialInformation(bindedPlanetName)["mass"];
             double cosmicSpeed = GravitaionPhysic.CountCosmicSpeed(distance, bindedPlanetMass);
 
-            /* Debug.Log(cosmicSpeed);
-            Debug.Log(GravitaionPhysic.ConvertToUnitPerFrame(cosmicSpeed));
-            Debug.Log(GravitaionPhysic.CountCosmicSpeed(distance, CelestialsDB.GetCelestialInformation(CelestialName.Earth)["mass"])); */
-            /* Debug.Log(currentSpeed);
-            Debug.Log(GravitaionPhysic.ConvertToUnitPerFrame(Math.Sqrt(distance * curG)) * Mathf.Pow(10, timeFactor)); */
+            
             Vector3 orbitalSpeed = currentDirection * (float)GravitaionPhysic.ConvertToUnitPerFrame(cosmicSpeed / 10) * Mathf.Pow(10, timeFactor);
 
             onOrbit = true;
@@ -61,7 +61,7 @@ public class SmartSatelite : Celestial
             distance = Vector3.Distance(bindedCelestial.GetComponent<Rigidbody>().position, rb.position) * Constants.distanceOfUnit;
 
             return;
-        }
+        } */
     }
 
     private double CountBindedPlanetG() {
@@ -70,9 +70,9 @@ public class SmartSatelite : Celestial
         Dictionary<string, double> planetPhysData = CelestialsDB.GetCelestialInformation(planetName);
         double planetG = GravitaionPhysic.CountGravityAceleration(planetPhysData["mass"], planetPhysData["radius"]);
 
-        distance = Vector3.Distance(bindedCelestial.GetComponent<Rigidbody>().position, rb.position) * Constants.distanceOfUnit;
+        distance = Vector3.Distance(bindedCelestial.GetComponent<Rigidbody>().position, rb.position) * Constants.DISTANCE_OF_UNIT;
 
-        double curentG = GravitaionPhysic.CountGravityAcelerationByDistance(planetG, planetPhysData["radius"], distance, 0.02f);
+        double curentG = GravitaionPhysic.CountGravityAcelerationByDistance(planetG, planetPhysData["radius"], distance);
 
         return curentG;
     }
@@ -83,29 +83,41 @@ public class SmartSatelite : Celestial
         return direction;
     }
     public override void SetGravitationInfluence(Vector3 aceleration) {
-        if(!isLaunched) {
+/*         if(!isLaunched) {
             return;
-        }
+        } */
 
         base.SetGravitationInfluence(aceleration);
 
     }
     public void Launch() {
-        String inputHeight = inputHeightUI.text.Split(' ')[0];
+        //String inputHeight = inputHeightUI.text.Split(' ')[0];
         
-        onOrbit = false;
+        /* onOrbit = false;
         if(rb.velocity.normalized != Vector3.zero) {
             currentDirection = rb.velocity.normalized;
-        }
+        } */
 
-        neededHeight = Convert.ToDouble(inputHeight) * 1000;
-        isLaunched = true;
+       /*  neededHeight = Convert.ToDouble(inputHeight) * 1000;
         curG = CountBindedPlanetG();
-        direction = FindDirection() /* + currentDirection */;
+        direction = FindDirection();
+        distance = Vector3.Distance(bindedCelestial.GetComponent<Rigidbody>().position, rb.position) * Constants.distanceOfUnit;
+        double distanceIncr = (neededHeight - distance) / Constants.distanceOfUnit;
 
-        curAcel = (float)curG * 1.4f * direction;
-        rb.velocity = curAcel; 
-        /* Debug.Log(rb.velocity.normalized);
-        Debug.Log(new Vector3(0, 0, rb.velocity.normalized.z - 1)); */
+        isLaunched = true;
+        rb.position += (float)distanceIncr * direction; */
+        
+        double eccentricity = 0;
+        distance = Vector3.Distance(bindedCelestial.GetComponent<Rigidbody>().position, rb.position) * Constants.DISTANCE_OF_UNIT;
+        CelestialName bindedPlanetName = bindedCelestial.GetComponent<Celestial>().GetName();
+        double bindedPlanetMass = CelestialsDB.GetCelestialInformation(bindedPlanetName)["mass"];
+        double cosmicSpeed = GravitaionPhysic.CountCosmicSpeedByEccentricity(distance, bindedPlanetMass, eccentricity);
+
+        curG = CountBindedPlanetG();
+        Debug.Log(curG);
+
+        Vector3 orbitalSpeed = direction * ((float)GravitaionPhysic.ConvertToUnitPerFrame(cosmicSpeed / 10) /* + ((float)curG * 1000) */ /* + 0.01033f */ /* + (0.0085f + ((float)eccentricity * 0.0216f)) */)* Mathf.Pow(10, timeFactor);
+        //onOrbit = true;
+        rb.velocity = orbitalSpeed;
     }
 }

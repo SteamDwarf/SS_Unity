@@ -10,14 +10,17 @@ public class UIManager : MonoBehaviour
     [SerializeField] Image showCloseDetailsBtn;
     [SerializeField] GameObject detailsMenu;
     [SerializeField] GameObject detailsItem;
-    [SerializeField] List<TextMeshProUGUI> satelitesSpeedUI;
     [SerializeField] Sprite showDetalsSprite;
     [SerializeField] Sprite closeDetalsSprite;
     [SerializeField] Dictionary<string, Dictionary<string, TextMeshProUGUI>> satelitesDetails;
 
+    private GameObject menuUI;
+    private GameManager gM;
+
     private void Start() {
         GameObject [] satelites = GameObject.FindGameObjectsWithTag("Satelite");
         satelitesDetails = new Dictionary<string, Dictionary<string, TextMeshProUGUI>>();
+        
 
         foreach (var satelite in satelites) {
             GameObject instDetailsItem = Instantiate(detailsItem, Vector3.zero, Quaternion.identity, detailsMenu.transform);
@@ -32,6 +35,16 @@ public class UIManager : MonoBehaviour
 
             instDetailsItem.GetComponentsInChildren<Image>()[1].sprite = sateliteSprite;
             satelitesDetails.Add(satelite.name, details);
+        }
+
+        menuUI = GameObject.FindGameObjectWithTag("Menu");
+        menuUI.SetActive(false);
+        gM = this.gameObject.GetComponent<GameManager>();
+    }
+
+    private void Update() {
+        if(Input.GetButtonDown("Cancel")) {
+            ShowHideMenu();
         }
     }
     public void UpdateSpeed(string name, int speed) {
@@ -56,6 +69,28 @@ public class UIManager : MonoBehaviour
     private void CloseDetails() {
         detailsMenu.SetActive(false);
         showCloseDetailsBtn.sprite = showDetalsSprite;
+    }
+
+    private void ShowHideMenu() {
+        if(menuUI.activeInHierarchy) {
+            menuUI.SetActive(false);
+            gM.ResumeSimulation();
+            return;
+        }
+
+        if(!menuUI.activeInHierarchy) {
+            menuUI.SetActive(true);
+            gM.PauseSimulation();
+            return;
+        }
+    }
+
+    public void Resume() {
+        menuUI.SetActive(false);
+        gM.ResumeSimulation();
+    }
+    public void Exit() {
+        Application.Quit();
     }
 
 }

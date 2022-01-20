@@ -15,7 +15,7 @@ public class Celestial : MonoBehaviour
     protected Rigidbody rb;
     private GameManager gM;
     protected UIManager uIManager;
-    public Vector3 curAcel;
+    protected Vector3 curAcel;
 
     protected int timeFactor;
 
@@ -51,14 +51,8 @@ public class Celestial : MonoBehaviour
 
         curAcel = aceleration;
         rb.velocity += aceleration;
-        speedInMetres = Convert.ToInt32(GravitaionPhysic.ConvertToMetresPerSec(rb.velocity.magnitude) / Mathf.Pow(10, timeFactor));
+        speedInMetres = Convert.ToInt32(GravitaionPhysic.ConvertToMetresPerSec(rb.velocity.magnitude));
 
         uIManager.UpdateSpeed(this.gameObject.name, speedInMetres);
     }
-/*     public void TimeAccelerate(int newTimeFactor) {
-        Vector3 planetInfluence = rb.velocity - (direction * speed);
-
-        speed = (float)GravitaionPhysic.ConvertToUnitPerFrame(speed) * Mathf.Pow(10, newTimeFactor);
-        rb.velocity = (planetInfluence * Mathf.Pow(10, (timeFactor - 1) * 2)) + (direction * speed);
-    } */
 }

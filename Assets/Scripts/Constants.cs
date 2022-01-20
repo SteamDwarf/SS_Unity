@@ -4,6 +4,6 @@ using UnityEngine;
 
 public static class Constants
 {
-    public const double EARTH_RADIUS = 6378000;
-    public const double distanceOfUnit = 10000000;
+    public const double GRAVITATION_CONSTANT = 6.67e-11;
+    public const double DISTANCE_OF_UNIT = 10000000;
 }

@@ -11,6 +11,9 @@ TagManager:
   - CelestialImage
   - InputHeight
   - LaunchBtn
+  - Menu
+  - ResumeBtn
+  - ExitBtn
   layers:
   - Default
   - TransparentFX

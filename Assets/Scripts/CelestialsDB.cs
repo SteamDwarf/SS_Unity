@@ -32,13 +32,8 @@ public static class CelestialsDB
         }},
         {CelestialName.Satelite, new Dictionary<string, double>() {
             {"mass", 2000},
-            {"radius", 0},
-            {"speed", 0}
-        }},
-        {CelestialName.Hubble, new Dictionary<string, double>() {
-            {"mass", 11000},
-            {"radius", 0},
-            {"speed", 0}
+            {"radius", 1},
+            {"speed", 2005}
         }}
     };
 

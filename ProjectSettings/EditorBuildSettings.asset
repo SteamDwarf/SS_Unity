@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Satelites.unity
+    guid: f94232431758e5948a8d7a60f7df8dfe
   m_configObjects: {}

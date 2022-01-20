@@ -4,17 +4,15 @@ using UnityEngine;
 
 public class Camera : MonoBehaviour
 {
+    [SerializeField] private float speed;
     float mouseSense = 5;
     float xRotation = 0f;
     float yRotation = 0f;
-    void Start() {
-        //StartCoroutine(CameraDelay());
-    }
 
     void FixedUpdate() {
         float x = Input.GetAxis("Horizontal");
         float y = Input.GetAxis("Vertical");
-        float z = Input.GetAxis("Mouse ScrollWheel") * 50;
+        float z = Input.GetAxis("Mouse ScrollWheel") * speed;
         float mouseX = Input.GetAxis("Mouse X") * mouseSense * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSense * Time.deltaTime * -1;
 
@@ -30,14 +28,7 @@ public class Camera : MonoBehaviour
 
             xRotation += mouseX;
             yRotation += mouseY;
-/*             xRotation = Mathf.Clamp(xRotation, -90f, 90f);
-            yRotation = Mathf.Clamp(yRotation, -90f, 90f); */
             transform.localRotation = Quaternion.Euler(yRotation, xRotation, 0);
         }
-    }
-
-    IEnumerator CameraDelay() {
-        yield return new WaitForSeconds(1);
-        transform.localRotation = Quaternion.Euler(Vector3.zero);
     }
 }
