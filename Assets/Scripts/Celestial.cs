@@ -18,8 +18,11 @@ public class Celestial : MonoBehaviour
     protected Vector3 curAcel;
 
     private Vector3 velocity;
+    private Vector3 startPosition;
+    private TrailRenderer trailRenderer;
 
-    protected int timeFactor;
+    //protected int timeFactor;
+    
 
     
     protected virtual void Start() {
@@ -27,9 +30,10 @@ public class Celestial : MonoBehaviour
         gM = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
         uIManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<UIManager>();
 
-        timeFactor = gM.GetTimeFactor();
+        //timeFactor = gM.GetTimeFactor();
         speed = (float)GravitaionPhysic.ConvertToUnitPerFrame(speed);
-
+        startPosition = rb.position;
+        trailRenderer = GetComponent<TrailRenderer>();
         //rb.velocity = direction * speed;
     }
 
@@ -64,5 +68,11 @@ public class Celestial : MonoBehaviour
         Vector3 newAceleration = (direction * speed * timeFactor + aceleration * Mathf.Pow(timeFactor, 2)) * Time.fixedDeltaTime;
         Vector3 newPos = rb.position + newAceleration;
         rb.MovePosition(newPos);
+    }
+
+    public void ChangeTimeSpeed() {
+        rb.position = startPosition;
+        velocity = Vector3.zero;
+        trailRenderer.Clear();
     }
 }

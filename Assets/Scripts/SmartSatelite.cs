@@ -82,7 +82,7 @@ public class SmartSatelite : Celestial
 
         return direction;
     }
-   /*  public override void SetGravitationInfluence(Vector3 aceleration) {
+   /* Расскоментировать! public override void SetGravitationInfluence(Vector3 aceleration) {
 
 
         base.SetGravitationInfluence(aceleration);
@@ -114,8 +114,9 @@ public class SmartSatelite : Celestial
         curG = CountBindedPlanetG();
         Debug.Log(curG);
 
-        Vector3 orbitalSpeed = direction * ((float)GravitaionPhysic.ConvertToUnitPerFrame(cosmicSpeed / 10) /* + ((float)curG * 1000) */ /* + 0.01033f */ /* + (0.0085f + ((float)eccentricity * 0.0216f)) */)* Mathf.Pow(10, timeFactor);
+        //Расскоментировать! Vector3 orbitalSpeed = direction * ((float)GravitaionPhysic.ConvertToUnitPerFrame(cosmicSpeed / 10) /* + ((float)curG * 1000) */ /* + 0.01033f */ /* + (0.0085f + ((float)eccentricity * 0.0216f)) */)* Mathf.Pow(10, timeFactor);
         //onOrbit = true;
-        rb.velocity = orbitalSpeed;
+        
+        //Раскомментировать! rb.velocity = orbitalSpeed;
     }
 }

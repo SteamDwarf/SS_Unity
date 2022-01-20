@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private float timeScale;
-    [SerializeField] private int timeFactor;
+    [SerializeField] private float timeFactor;
     [SerializeField] Sprite resumeSprite;
     [SerializeField] Sprite pauseSprite;
 
@@ -17,7 +17,11 @@ public class GameManager : MonoBehaviour
     private List<CelestialStruct> satelites = new List<CelestialStruct>();
     private UIManager uIManager;
 
+    private bool isPaused = true;
+
     void Start() {
+        Time.timeScale = timeScale;
+
         GameObject[] celestialsArray = GameObject.FindGameObjectsWithTag("Celestial");
         GameObject[] satelitesArray = GameObject.FindGameObjectsWithTag("Satelite");
         pauseResumeBtn = GameObject.FindGameObjectWithTag("PauseResumeBtn").GetComponent<Image>();
@@ -30,14 +34,20 @@ public class GameManager : MonoBehaviour
     }
 
     void FixedUpdate() {
+        if(isPaused) {
+            return;
+        }
         SimulateGravitation();
+        SpeedUpTime();
     }
     public void ResumeSimulation() {
-        Time.timeScale = timeScale;
+        //Time.timeScale = timeScale;
+        isPaused = false;
         pauseResumeBtn.sprite = resumeSprite;
     }
     public void PauseSimulation() {
-        Time.timeScale = 0;
+        //Time.timeScale = 0;
+        isPaused = true;
         pauseResumeBtn.sprite = pauseSprite;
     }
 
@@ -67,7 +77,11 @@ public class GameManager : MonoBehaviour
     }
     
     public void ResumePauseSimulation() {
-        if(Time.timeScale > 0){
+        /* if(Time.timeScale > 0){
+            PauseSimulation();
+            return;
+        } */
+        if(!isPaused){
             PauseSimulation();
             return;
         }
@@ -79,7 +93,7 @@ public class GameManager : MonoBehaviour
         Time.timeScale += 10;
     }
 
-    public int GetTimeFactor() {
+    public float GetTimeFactor() {
         return timeFactor;
     }
 
@@ -116,4 +130,26 @@ public class GameManager : MonoBehaviour
 
         return acelerationVector;
     }
+
+    private void SpeedUpTime() {
+        if(Input.GetKeyDown(KeyCode.N)) {
+            timeFactor *= 1.2f;
+
+
+            foreach (var satelite in satelites){
+                satelite.script.ChangeTimeSpeed();
+            }
+
+            //PauseSimulation();        
+        }
+
+        if(Input.GetKeyDown(KeyCode.M)) {
+            timeFactor /= 1.2f;
+            Debug.Log(timeFactor);
+            foreach (var satelite in satelites){
+                satelite.script.ChangeTimeSpeed();
+            }
+        }
+    }
+
 }
