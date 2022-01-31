@@ -163,25 +163,4 @@ public class GameManager : MonoBehaviour
 
         uIManager.UpdateTimeScaleUI(curTimeFactor);
     }
-    /* private void SpeedUpTime() {
-        if(Input.GetKeyDown(KeyCode.N)) {
-            timeFactor *= 1.2f;
-
-
-            foreach (var satelite in satelites){
-                satelite.script.ChangeTimeSpeed();
-            }
-
-            //PauseSimulation();        
-        }
-
-        if(Input.GetKeyDown(KeyCode.M)) {
-            timeFactor /= 1.2f;
-            Debug.Log(timeFactor);
-            foreach (var satelite in satelites){
-                satelite.script.ChangeTimeSpeed();
-            }
-        }
-    } */
-
 }
