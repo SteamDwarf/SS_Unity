@@ -9,10 +9,12 @@ public class UIManager : MonoBehaviour
 {
     [SerializeField] Image showCloseDetailsBtn;
     [SerializeField] GameObject detailsMenu;
+    [SerializeField] GameObject detailsContainer;
     [SerializeField] GameObject detailsItem;
     [SerializeField] Sprite showDetalsSprite;
     [SerializeField] Sprite closeDetalsSprite;
     [SerializeField] Dictionary<string, Dictionary<string, TextMeshProUGUI>> satelitesDetails;
+    [SerializeField] TextMeshProUGUI timeScaleUI;
 
     private GameObject menuUI;
     private GameManager gM;
@@ -23,7 +25,7 @@ public class UIManager : MonoBehaviour
         
 
         foreach (var satelite in satelites) {
-            GameObject instDetailsItem = Instantiate(detailsItem, Vector3.zero, Quaternion.identity, detailsMenu.transform);
+            GameObject instDetailsItem = Instantiate(detailsItem, Vector3.zero, Quaternion.identity, detailsContainer.transform);
             TextMeshProUGUI [] detailsText = instDetailsItem.GetComponentsInChildren<TextMeshProUGUI>();
             TextMeshProUGUI speedUI = detailsText[0];
             TextMeshProUGUI distanceUI = detailsText[1];
@@ -40,6 +42,7 @@ public class UIManager : MonoBehaviour
         menuUI = GameObject.FindGameObjectWithTag("Menu");
         menuUI.SetActive(false);
         gM = this.gameObject.GetComponent<GameManager>();
+        UpdateTimeScaleUI(gM.GetTimeFactor());
     }
 
     private void Update() {
@@ -91,6 +94,11 @@ public class UIManager : MonoBehaviour
     }
     public void Exit() {
         Application.Quit();
+    }
+
+    public void UpdateTimeScaleUI(float timeRate) {
+        string roundedTimeRate = String.Format("{0:0.0}", timeRate);
+        timeScaleUI.text = $"Время: х{roundedTimeRate}";
     }
 
 }

@@ -70,7 +70,7 @@ public class SmartSatelite : Celestial
         Dictionary<string, double> planetPhysData = CelestialsDB.GetCelestialInformation(planetName);
         double planetG = GravitaionPhysic.CountGravityAceleration(planetPhysData["mass"], planetPhysData["radius"]);
 
-        distance = Vector3.Distance(bindedCelestial.GetComponent<Rigidbody>().position, rb.position) * Constants.DISTANCE_OF_UNIT;
+        //Раскоментировать! distance = Vector3.Distance(bindedCelestial.GetComponent<Rigidbody>().position, rb.position) * Constants.DISTANCE_OF_UNIT;
 
         double curentG = GravitaionPhysic.CountGravityAcelerationByDistance(planetG, planetPhysData["radius"], distance);
 
@@ -106,7 +106,7 @@ public class SmartSatelite : Celestial
         rb.position += (float)distanceIncr * direction; */
         
         double eccentricity = 0;
-        distance = Vector3.Distance(bindedCelestial.GetComponent<Rigidbody>().position, rb.position) * Constants.DISTANCE_OF_UNIT;
+        //Раскоментировать! distance = Vector3.Distance(bindedCelestial.GetComponent<Rigidbody>().position, rb.position) * Constants.DISTANCE_OF_UNIT;
         CelestialName bindedPlanetName = bindedCelestial.GetComponent<Celestial>().GetName();
         double bindedPlanetMass = CelestialsDB.GetCelestialInformation(bindedPlanetName)["mass"];
         double cosmicSpeed = GravitaionPhysic.CountCosmicSpeedByEccentricity(distance, bindedPlanetMass, eccentricity);

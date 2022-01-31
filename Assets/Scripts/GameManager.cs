@@ -7,9 +7,12 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private float timeScale;
-    [SerializeField] private float timeFactor;
+    
+    [SerializeField] List<float> timeFactors;
+    [SerializeField] int curTimeFactorIndex;
     [SerializeField] Sprite resumeSprite;
     [SerializeField] Sprite pauseSprite;
+    [SerializeField] Scene sceneType;
 
     private Image pauseResumeBtn;
 
@@ -18,6 +21,8 @@ public class GameManager : MonoBehaviour
     private UIManager uIManager;
 
     private bool isPaused = true;
+    private double DISTANCE_OF_UNIT;
+    private float curTimeFactor;
 
     void Start() {
         Time.timeScale = timeScale;
@@ -30,6 +35,8 @@ public class GameManager : MonoBehaviour
         celestials = CreatingStructs(celestialsArray, true);
         satelites = CreatingStructs(satelitesArray, false);
 
+        DISTANCE_OF_UNIT = Constants.getScale(sceneType);
+        curTimeFactor = timeFactors[curTimeFactorIndex];
         PauseSimulation();
     }
 
@@ -38,7 +45,7 @@ public class GameManager : MonoBehaviour
             return;
         }
         SimulateGravitation();
-        SpeedUpTime();
+        //SpeedUpTime();
     }
     public void ResumeSimulation() {
         //Time.timeScale = timeScale;
@@ -94,7 +101,7 @@ public class GameManager : MonoBehaviour
     }
 
     public float GetTimeFactor() {
-        return timeFactor;
+        return curTimeFactor;
     }
 
     private void SimulateGravitation() {
@@ -104,20 +111,20 @@ public class GameManager : MonoBehaviour
             for (int j = i + 1; j < celestials.Count; j++) {
                 CelestialStruct secondObj = celestials[j];
 
-                double distance = Vector3.Distance(firstObj.rb.position, secondObj.rb.position) * Constants.DISTANCE_OF_UNIT;
+                double distance = Vector3.Distance(firstObj.rb.position, secondObj.rb.position) * DISTANCE_OF_UNIT;
 
                 Vector3 firstObjAcelerationVector = FindObjectAcelerationVector(distance, firstObj, secondObj);
                 Vector3 secondObjAcelerationVector = FindObjectAcelerationVector(distance, secondObj, firstObj);
 
-                firstObj.script.SetGravitationInfluence(firstObjAcelerationVector, timeFactor);
-                secondObj.script.SetGravitationInfluence(secondObjAcelerationVector, timeFactor);
+                firstObj.script.SetGravitationInfluence(firstObjAcelerationVector, curTimeFactor);
+                secondObj.script.SetGravitationInfluence(secondObjAcelerationVector, curTimeFactor);
             }
 
             foreach (var satelite in satelites) {
-                double distance = Vector3.Distance(firstObj.rb.position, satelite.rb.position) * Constants.DISTANCE_OF_UNIT;
+                double distance = Vector3.Distance(firstObj.rb.position, satelite.rb.position) * DISTANCE_OF_UNIT;
                 Vector3 sateliteAcelerationVector = FindObjectAcelerationVector(distance, satelite, firstObj);
 
-                satelite.script.SetGravitationInfluence(sateliteAcelerationVector, timeFactor);
+                satelite.script.SetGravitationInfluence(sateliteAcelerationVector, curTimeFactor);
                 uIManager.UpdateDistance(satelite.script.gameObject.name, distance);
             }
         }
@@ -131,7 +138,32 @@ public class GameManager : MonoBehaviour
         return acelerationVector;
     }
 
-    private void SpeedUpTime() {
+    public void SpeedUpTime() {
+        //curTimeFactor += 100f;
+        //timeFactor += 100f;
+        if(curTimeFactorIndex + 1 < timeFactors.Count) {
+            curTimeFactorIndex++;
+            curTimeFactor = timeFactors[curTimeFactorIndex];
+            AffectTimeChanging();
+        }
+    }
+    public void SpeedDownTime() {
+        if(curTimeFactorIndex - 1 >= 0) {
+            //curTimeFactor /= 1.2f;
+            curTimeFactorIndex--;
+            curTimeFactor = timeFactors[curTimeFactorIndex];
+            AffectTimeChanging();
+        }
+    }
+
+    private void AffectTimeChanging() {
+        foreach (var satelite in satelites){
+            satelite.script.ChangeTimeSpeed();
+        }
+
+        uIManager.UpdateTimeScaleUI(curTimeFactor);
+    }
+    /* private void SpeedUpTime() {
         if(Input.GetKeyDown(KeyCode.N)) {
             timeFactor *= 1.2f;
 
@@ -150,6 +182,6 @@ public class GameManager : MonoBehaviour
                 satelite.script.ChangeTimeSpeed();
             }
         }
-    }
+    } */
 
 }

@@ -4,14 +4,42 @@ using UnityEngine;
 
 public class Camera : MonoBehaviour
 {
-    [SerializeField] private float speed;
+    [SerializeField] private float defSpeed;
+    private float speed;
+    private bool isSlow = false;
+    private bool isFreeze = false;
     float mouseSense = 5;
     float xRotation = 0f;
     float yRotation = 0f;
 
+    private void Start() {
+        speed = defSpeed;
+        StartCoroutine(CameraFreeze());
+    }
+
     void FixedUpdate() {
-        float x = Input.GetAxis("Horizontal");
-        float y = Input.GetAxis("Vertical");
+        if(isFreeze) {
+           return; 
+        }
+        CheckSlowMotion();
+        CameraMove();
+    }
+
+    private void CheckSlowMotion() {
+        if(Input.GetKeyDown(KeyCode.LeftShift) && !isSlow) {
+            speed /= 10;
+            isSlow = true;
+            return;
+        }
+        if(Input.GetKeyUp(KeyCode.LeftShift)) {
+            speed = defSpeed;
+            isSlow = false;
+            return;
+        }
+    }
+    private void CameraMove() {
+        float x = Input.GetAxis("Horizontal") * (speed / 100);
+        float y = Input.GetAxis("Vertical") * (speed / 100);
         float z = Input.GetAxis("Mouse ScrollWheel") * speed;
         float mouseX = Input.GetAxis("Mouse X") * mouseSense * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSense * Time.deltaTime * -1;
@@ -25,10 +53,15 @@ public class Camera : MonoBehaviour
         }
 
         if((mouseX != 0 || mouseY != 0)) {
-
             xRotation += mouseX;
             yRotation += mouseY;
             transform.localRotation = Quaternion.Euler(yRotation, xRotation, 0);
         }
     }
+
+    private IEnumerator CameraFreeze() {
+        isFreeze = true;
+        yield return new WaitForSeconds(2f);
+        isFreeze = false;
+    } 
 }

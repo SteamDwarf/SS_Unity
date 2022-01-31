@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 using TMPro;
 
@@ -20,6 +20,7 @@ public class Celestial : MonoBehaviour
     private Vector3 velocity;
     private Vector3 startPosition;
     private TrailRenderer trailRenderer;
+    //private Vector3 startAccel;
 
     //protected int timeFactor;
     
@@ -34,6 +35,7 @@ public class Celestial : MonoBehaviour
         speed = (float)GravitaionPhysic.ConvertToUnitPerFrame(speed);
         startPosition = rb.position;
         trailRenderer = GetComponent<TrailRenderer>();
+        velocity = speed * direction;
         //rb.velocity = direction * speed;
     }
 
@@ -43,9 +45,9 @@ public class Celestial : MonoBehaviour
     public CelestialType GetCelestialType() {
         return celestialType;
     }
-    public void SetInitialSpeed(float speed) {
+/*     public void SetInitialSpeed(float speed) {
         rb.velocity = direction * speed;
-    }
+    } */
     public Vector3 GetDirection() {
         return direction;
     }
@@ -55,24 +57,31 @@ public class Celestial : MonoBehaviour
     public virtual void SetGravitationInfluence(Vector3 aceleration, float timeFactor) {
         int speedInMetres;
 
-        curAcel = aceleration;
-        velocity += aceleration;
-        //rb.velocity += aceleration;
-        Move(velocity, timeFactor);
+        //velocity += aceleration; //Умножить на ускорение
+        //Move(velocity, timeFactor);
+
+        Move(aceleration, timeFactor);
         speedInMetres = Convert.ToInt32(GravitaionPhysic.ConvertToMetresPerSec(rb.velocity.magnitude));
 
         uIManager.UpdateSpeed(this.gameObject.name, speedInMetres);
     }
 
     private void Move(Vector3 aceleration, float timeFactor) {
-        Vector3 newAceleration = (direction * speed * timeFactor + aceleration * Mathf.Pow(timeFactor, 2)) * Time.fixedDeltaTime;
-        Vector3 newPos = rb.position + newAceleration;
+        //Vector3 newAceleration = (direction * speed + aceleration * timeFactor) * Time.fixedDeltaTime * timeFactor;
+        
+        velocity += aceleration * Time.fixedDeltaTime * timeFactor;
+        Vector3 newPos = rb.position + velocity * Time.fixedDeltaTime * timeFactor; //Умножить на ускорение
         rb.MovePosition(newPos);
     }
 
     public void ChangeTimeSpeed() {
-        rb.position = startPosition;
-        velocity = Vector3.zero;
+        //rb.position = startPosition;
+        //velocity = Vector3.zero;
+        //StartCoroutine(TrailRendererCoroutine());
+    }
+
+    private IEnumerator TrailRendererCoroutine() {
+        yield return new WaitForSeconds(0.1f);
         trailRenderer.Clear();
     }
 }
