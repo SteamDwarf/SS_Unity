@@ -84,10 +84,6 @@ public class GameManager : MonoBehaviour
     }
     
     public void ResumePauseSimulation() {
-        /* if(Time.timeScale > 0){
-            PauseSimulation();
-            return;
-        } */
         if(!isPaused){
             PauseSimulation();
             return;
@@ -95,11 +91,14 @@ public class GameManager : MonoBehaviour
         
         ResumeSimulation();
     }
-    
-    public void TimeAccelerate() {
-        Time.timeScale += 10;
+    public void RestartSimulation() {
+        foreach (var satelite in satelites){
+            satelite.script.RestartPosition();
+        }
+        curTimeFactorIndex = 0;
+        curTimeFactor = timeFactors[curTimeFactorIndex];
+        uIManager.UpdateTimeScaleUI(curTimeFactor);
     }
-
     public float GetTimeFactor() {
         return curTimeFactor;
     }

@@ -11,6 +11,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] GameObject detailsMenu;
     [SerializeField] GameObject detailsContainer;
     [SerializeField] GameObject detailsItem;
+    [SerializeField] GameObject unitSettings;
     [SerializeField] Sprite showDetalsSprite;
     [SerializeField] Sprite closeDetalsSprite;
     [SerializeField] Dictionary<string, Dictionary<string, TextMeshProUGUI>> satelitesDetails;
@@ -18,6 +19,7 @@ public class UIManager : MonoBehaviour
 
     private GameObject menuUI;
     private GameManager gM;
+    private Units choosedUnits;
 
     private void Start() {
         GameObject [] satelites = GameObject.FindGameObjectsWithTag("Satelite");
@@ -51,10 +53,19 @@ public class UIManager : MonoBehaviour
         }
     }
     public void UpdateSpeed(string name, int speed) {
-        satelitesDetails[name]["speed"].text = (speed * 10).ToString() + " м/с";
+        satelitesDetails[name]["speed"].text = (speed * 2f / 10f).ToString() + " км/с";
     }
     public void UpdateDistance(string name, double distance) {
-        satelitesDetails[name]["distance"].text = Math.Round(distance / 1000).ToString() + "км"; //distance.ToString() + "м";
+        if(choosedUnits == Units.kilometres) {
+            satelitesDetails[name]["distance"].text = Math.Round(distance / 1000).ToString() + " км";
+            return;
+        }
+
+        if(choosedUnits == Units.astronomicalUnit) {
+            double distanceAE = Math.Round(distance / 1000) * Constants.ASTRONOMICAL_UNIT;
+            satelitesDetails[name]["distance"].text = String.Format("{0:0.00}", distanceAE) + " а.е";
+            return;
+        }
     }
     public void ShowCloseDetails() {
         if(detailsMenu.activeInHierarchy) {
@@ -67,10 +78,12 @@ public class UIManager : MonoBehaviour
 
     private void ShowDetails() {
         detailsMenu.SetActive(true);
+        unitSettings.SetActive(true);
         showCloseDetailsBtn.sprite = closeDetalsSprite;
     }
     private void CloseDetails() {
         detailsMenu.SetActive(false);
+        unitSettings.SetActive(false);
         showCloseDetailsBtn.sprite = showDetalsSprite;
     }
 
@@ -92,8 +105,19 @@ public class UIManager : MonoBehaviour
         menuUI.SetActive(false);
         gM.ResumeSimulation();
     }
+    public void Restart() {
+        gM.RestartSimulation();
+        Resume();
+    }
     public void Exit() {
         Application.Quit();
+    }
+
+    public void ChooseKilometres() {
+        choosedUnits = Units.kilometres;
+    }
+    public void ChooseAstronomicalUnits() {
+        choosedUnits = Units.astronomicalUnit;
     }
 
     public void UpdateTimeScaleUI(float timeRate) {

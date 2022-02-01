@@ -21,8 +21,25 @@ public class Camera : MonoBehaviour
         if(isFreeze) {
            return; 
         }
-        CheckSlowMotion();
+        //CheckSlowMotion();
+        CheckHeight();
         CameraMove();
+    }
+
+    private void CheckHeight() {
+        if(transform.position.y < 300f && transform.position.y > -300f && !isSlow) {
+            speed /= 10;
+            isSlow = true;
+            Debug.Log("Slow");
+            return;
+        }
+
+        if(isSlow && (transform.position.y > 300f || transform.position.y < -300f)) {
+            speed *= 10;
+            isSlow = false;
+            Debug.Log("Fast");
+            return;
+        }
     }
 
     private void CheckSlowMotion() {

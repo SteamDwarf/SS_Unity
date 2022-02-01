@@ -10,3 +10,6 @@ public enum CelestialType {
 public enum Scene {
     Satelites, SolarSystem
 }
+public enum Units {
+    kilometres, astronomicalUnit
+}

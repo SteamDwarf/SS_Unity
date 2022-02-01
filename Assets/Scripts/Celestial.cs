@@ -45,9 +45,6 @@ public class Celestial : MonoBehaviour
     public CelestialType GetCelestialType() {
         return celestialType;
     }
-/*     public void SetInitialSpeed(float speed) {
-        rb.velocity = direction * speed;
-    } */
     public Vector3 GetDirection() {
         return direction;
     }
@@ -61,7 +58,7 @@ public class Celestial : MonoBehaviour
         //Move(velocity, timeFactor);
 
         Move(aceleration, timeFactor);
-        speedInMetres = Convert.ToInt32(GravitaionPhysic.ConvertToMetresPerSec(rb.velocity.magnitude));
+        speedInMetres = Convert.ToInt32(GravitaionPhysic.ConvertToMetresPerSec(velocity.magnitude));
 
         uIManager.UpdateSpeed(this.gameObject.name, speedInMetres);
     }
@@ -78,6 +75,11 @@ public class Celestial : MonoBehaviour
         //rb.position = startPosition;
         //velocity = Vector3.zero;
         //StartCoroutine(TrailRendererCoroutine());
+    }
+    public void RestartPosition() {
+        rb.position = startPosition;
+        velocity = speed * direction;
+        StartCoroutine(TrailRendererCoroutine());
     }
 
     private IEnumerator TrailRendererCoroutine() {
